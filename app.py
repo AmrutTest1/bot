@@ -115,9 +115,8 @@ def handle_final_action(to, action):
         "syllabus": "https://app.ksouonlinestudy.com/"
     }
     if action in links:
-        send_whatsapp_message(to, f"Dear Student, Please Visit:
-{links[action]}")
-
+        send_whatsapp_message(to, f"Dear Student, Please Visit:\nhttps://www.ksoumysuru.ac.in/index.php/admissions/")
+        
 # ========== ROUTES ==========
 @app.route("/")
 def home():
