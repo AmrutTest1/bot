@@ -1,15 +1,22 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, send_file
 import requests
 import os
+import json
+from datetime import datetime
 
 app = Flask(__name__)
 
-ACCESS_TOKEN = "EAB72YZA4NcjIBO6CqVP6NH8pcpGVGVakO97yjS8bm9FPdgxCZBbRjs93OOfW70IT7JEYQUajdHUQ9aWhUfnN40ZCWFTwQKOzqbODPXpUytDPZAZBIA0TuiIvbyqHHAySqZB0pUwU2ZAzaGRgsAdVca8y8YG0Rr1nr8gU6XiV3gYsuGsEZBgE0IDhnhwW13Bcn3zl38iP4Pw75TEjHsIzqXd7atQds7oHH5ddRZBMZD"
+ACCESS_TOKEN = "EAB72YZA4NcjIBOxx3mje11WJ1BhJj83VtM825XC4RdMDZChjXv2G8fH0z76kDVrZCRSvGrwbasZCptPz6TF10Jal0oynWHrHNq6LkX4213H5mya1HnRZB6BZBIT5v11et7spTFBFmBGS70dREIsR18HRikNiQ4qoFiJl2TpZAyqH8TzqMUh2SJJyidbUxqrgwTxlZCM2bl2clEqykT78wYGinh3hGZADvohcZD"
 PHONE_NUMBER_ID = "530531536814628"
 VERIFY_TOKEN = "amrut"
-
+LOG_FILE = "webhook_log.txt"
 
 # ========== UTILITIES ==========
+
+def log_to_file(data):
+    with open(LOG_FILE, "a") as f:
+        f.write(f"\n[{datetime.now()}]\n{json.dumps(data, indent=2)}\n{'-'*60}\n")
+
 def send_whatsapp_message(to, text):
     url = f"https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages"
     headers = {
@@ -61,10 +68,10 @@ def send_course_buttons(to, program):
 
     body_text = "Please choose a course under ONLINE PROGRAM:" if program == "online_program" else "Please choose a course under ODL PROGRAM:"
 
-    buttons = [{
+    buttons = [ {
         "type": "reply",
         "reply": {"id": f"course_{c.lower().replace(' ', '_')}", "title": c}
-    } for c in courses[:3]]  # WhatsApp allows only 3 buttons, adjust later for more
+    } for c in courses[:3] ]  # Only 3 buttons allowed per message
 
     url = f"https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages"
     headers = {
@@ -116,9 +123,10 @@ def handle_final_action(to, action):
         "syllabus": "https://app.ksouonlinestudy.com/"
     }
     if action in links:
-        send_whatsapp_message(to, f"Dear Student, Please Visit:\nhttps://www.ksoumysuru.ac.in/index.php/admissions/")
-        
+        send_whatsapp_message(to, f"Dear Student, Please Visit:\n{links[action]}")
+
 # ========== ROUTES ==========
+
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -132,8 +140,12 @@ def verify():
 @app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.get_json()
+    
+    # 🔒 Log entire webhook payload to file
+    log_to_file(data)
+    
     try:
-        msg = data['entry'][0]['changes'][0]['value']['messages'][0]
+        msg = data['entry'][0]['changes'][0]['value'].get('messages', [])[0]
         sender = msg['from']
 
         if 'interactive' in msg:
@@ -141,13 +153,10 @@ def webhook():
 
             if button_id in ["online_program", "odl_program"]:
                 send_course_buttons(sender, button_id)
-
             elif button_id.startswith("course_"):
                 send_course_menu(sender)
-
             elif button_id in ["admission_info", "exam_fee", "exam_date", "syllabus", "slm"]:
                 handle_final_action(sender, button_id)
-
         else:
             send_program_buttons(sender)
 
@@ -155,6 +164,13 @@ def webhook():
         print("Error:", e)
 
     return "OK", 200
+
+@app.route("/download-log")
+def download_log():
+    if os.path.exists(LOG_FILE):
+        return send_file(LOG_FILE, as_attachment=True)
+    else:
+        return "Log file not found.", 404
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
