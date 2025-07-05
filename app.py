@@ -116,7 +116,7 @@ def send_course_menu(to):
 
 def handle_final_action(to, action):
     links = {
-        "admission_info": https://www.uompgadmissions.com/",
+        "admission_info": "https://www.uompgadmissions.com/",
         "exam_fee": "https://www.uompgadmissions.com/",
         "exam_date": "https://www.uompgadmissions.com//",
         "syllabus": "https://www.uompgadmissions.com/"
