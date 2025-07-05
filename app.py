@@ -6,7 +6,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-ACCESS_TOKEN = "EAB72YZA4NcjIBO4nHzZCFRmzbBeunovZBpKlA9co7HRGwJOh2bqGTE0pWjA7cqLtAOCtUvoQbzR0LeqszfwN9b7dAPGj5CFqlA8A8y3s9pZBrfADMCowC8Xt7PhNmiXgb4Izujy56hC4hr1XimwZCdoBN8BIQGMzqx4Y4fprEvHfjuouj7UpLU7Nr28bgX91PsZBWfbIrFIHsoLeZBFIaRCT7rmtFEiKmxZBN5Mqa4QSTwZDZD"
+ACCESS_TOKEN = "EAB72YZA4NcjIBPInPc39XlbILv7JtRhEf9VgMk1CV0ZA2ZATAvjaHnAa6iaiPYz3M2FIoOwVJZAtEoKwC3nwG29wtAxz8t8gH6FEanfmp0I1s19hes6N4uwVOSkueWxcrdE8oHQJLo4tdDrNIaM6o6hqtM0ubjspRavr49SoIO8ZAfOqEwqdzN4R55zHkc85Uko9qIx6T4zrqPrWfLRMZBRuxpW9DHUpTZBwvJsr1I9ZA18RqQZDZD"
 PHONE_NUMBER_ID = "530531536814628"
 VERIFY_TOKEN = "amrut"
 LOG_FILE = "webhook_log.txt"
@@ -43,7 +43,7 @@ def send_program_buttons(to):
         "interactive": {
             "type": "button",
             "body": {
-                "text": "🎓 Welcome to Karnataka State Open University, Mysuru\n\nOffering Online Courses and ODL Programs.\n\nPlease choose your program type:"
+                "text": "🎓 Welcome to the University of Mysore – a heritage institution fostering knowledge, innovation, and excellence since 1916..\n\nPlease choose your program type:"
             },
             "action": {
                 "buttons": [
@@ -53,7 +53,7 @@ def send_program_buttons(to):
                     },
                     {
                         "type": "reply",
-                        "reply": {"id": "odl_program", "title": "2️⃣ ODL PROGRAM"}
+                        "reply": {"id": "odl_program", "title": "2️⃣REGULAR PROGRAM"}
                     }
                 ]
             }
@@ -116,11 +116,10 @@ def send_course_menu(to):
 
 def handle_final_action(to, action):
     links = {
-        "admission_info": "https://www.ksoumysuru.ac.in/index.php/admissions/",
-        "exam_fee": "https://ksouportal.com/views/ExamHome.aspx",
-        "exam_date": "https://www.ksoumysuru.ac.in/index.php/Exam/",
-        "slm": "https://app.ksouonlinestudy.com/",
-        "syllabus": "https://app.ksouonlinestudy.com/"
+        "admission_info": https://www.uompgadmissions.com/",
+        "exam_fee": "https://www.uompgadmissions.com/",
+        "exam_date": "https://www.uompgadmissions.com//",
+        "syllabus": "https://www.uompgadmissions.com/"
     }
     if action in links:
         send_whatsapp_message(to, f"Dear Student, Please Visit:\n{links[action]}")
